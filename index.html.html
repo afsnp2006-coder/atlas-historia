@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Universal de la Historia — Del Big Bang al 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#c9a84c;--gold-light:#e8c97a;
+  --bg:#ffffff;--bg2:#f5f4f2;--bg3:#eeece8;
+  --text:#1a1410;--text2:#6b6355;
+  --border:rgba(0,0,0,0.1);
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#16130e;--bg2:#1f1b14;--bg3:#2a251c;--text:#f0e8d8;--text2:#a09070;--border:rgba(255,255,255,0.1)}
+}
+body{font-family:'Source Serif 4',serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.header{background:linear-gradient(180deg,#0a0806 0%,#1a1008 100%);padding:2rem 1.5rem 1.5rem;text-align:center;border-bottom:2px solid var(--gold);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.15) 0%,transparent 70%)}
+.header h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.8rem);color:var(--gold-light);letter-spacing:.04em;position:relative;z-index:1;text-shadow:0 2px 20px rgba(201,168,76,.4)}
+.header p{color:rgba(232,201,122,.65);font-size:.85rem;margin-top:.5rem;letter-spacing:.1em;text-transform:uppercase;position:relative;z-index:1}
+.stars{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:0}
+.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 3s infinite}
+@keyframes twinkle{0%,100%{opacity:.3}50%{opacity:1}}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:.75rem 1rem;background:var(--bg2);border-bottom:1px solid var(--border)}
+.stat{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);font-weight:700;display:block}
+.stat-label{font-size:.65rem;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+
+.era-nav{display:flex;overflow-x:auto;gap:4px;padding:.75rem 1rem;background:#0f0d08;border-bottom:1px solid rgba(201,168,76,.3);scrollbar-width:none}
+.era-nav::-webkit-scrollbar{display:none}
+.era-btn{flex-shrink:0;padding:6px 14px;background:transparent;border:1px solid rgba(201,168,76,.3);border-radius:20px;color:rgba(232,201,122,.7);font-size:.78rem;cursor:pointer;font-family:'Source Serif 4',serif;letter-spacing:.03em;transition:all .2s;white-space:nowrap}
+.era-btn:hover{background:rgba(201,168,76,.15);color:var(--gold-light)}
+.era-btn.active{background:rgba(201,168,76,.25);border-color:var(--gold);color:var(--gold-light)}
+
+.search-bar{padding:.75rem 1rem;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.search-input{flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem;font-family:'Source Serif 4',serif}
+.search-btn{padding:8px 16px;background:var(--gold);border:none;border-radius:8px;color:#0a0806;font-weight:600;font-size:.85rem;cursor:pointer;font-family:'Source Serif 4',serif;transition:all .2s}
+.search-btn:hover{background:var(--gold-light)}
+
+.timeline-panel{padding:1rem}
+
+.era-section{margin-bottom:2rem}
+.era-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid;cursor:pointer;user-select:none}
+.era-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.era-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700}
+.era-dates{font-size:.78rem;opacity:.65;font-style:italic;margin-top:2px}
+.era-toggle{margin-left:auto;font-size:.75rem;opacity:.6;transition:transform .3s}
+.era-toggle.open{transform:rotate(180deg)}
+
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;transition:max-height .5s ease}
+
+.event-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.event-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 16px rgba(201,168,76,.15)}
+.event-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px}
+.event-card.cosmic::before{background:#4a90d9}
+.event-card.prehistoric::before{background:#7a9e4a}
+.event-card.ancient::before{background:#c9a84c}
+.event-card.classical::before{background:#b5651d}
+.event-card.medieval::before{background:#8b4a9e}
+.event-card.modern::before{background:#c0392b}
+.event-card.contemporary::before{background:#2e86ab}
+.event-card.extinctions::before{background:#e74c3c}
+
+.card-type{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+.type-empire{background:rgba(201,168,76,.2);color:var(--gold)}
+.type-war{background:rgba(139,26,26,.2);color:#c0392b}
+.type-science{background:rgba(44,95,122,.2);color:#2e86ab}
+.type-extinction{background:rgba(231,76,60,.2);color:#e74c3c}
+.type-cosmic{background:rgba(74,144,217,.15);color:#4a90d9}
+.type-discovery{background:rgba(45,90,39,.2);color:#27ae60}
+.type-revolution{background:rgba(155,89,182,.2);color:#9b59b6}
+.type-person{background:rgba(52,73,94,.2);color:var(--text2)}
+
+.card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3}
+.card-date{font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:6px}
+.card-summary{font-size:.82rem;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.tag{font-size:.68rem;padding:2px 6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text2)}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:1rem}
+.modal{background:var(--bg);border-radius:16px;border:1px solid var(--gold);width:100%;max-width:720px;margin:auto;overflow:hidden;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-hero{position:relative;height:220px;overflow:hidden;background:#0a0806}
+.modal-hero img{width:100%;height:100%;object-fit:cover;opacity:.7}
+.modal-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(0deg,rgba(0,0,0,.9) 0%,transparent 100%)}
+.modal-hero-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold-light);line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.modal-hero-date{color:var(--gold);font-size:.85rem;margin-top:4px;opacity:.85}
+.modal-close{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.7);border:1px solid rgba(201,168,76,.5);color:var(--gold-light);width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.modal-body{padding:1.5rem}
+.modal-section{margin-bottom:1.5rem}
+.modal-section h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.modal-section p{font-size:.9rem;line-height:1.75;color:var(--text)}
+
+.ai-content{min-height:80px;position:relative}
+.ai-loading{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:.85rem;padding:1rem 0}
+.ai-dots span{display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dot 1.4s infinite}
+.ai-dots span:nth-child(2){animation-delay:.2s}
+.ai-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,60%,100%{transform:scale(1);opacity:.4}30%{transform:scale(1.4);opacity:1}}
+
+.api-key-notice{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.4);border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:.85rem;color:var(--text)}
+.api-key-notice strong{color:var(--gold);display:block;margin-bottom:6px}
+.api-key-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:.85rem;font-family:'Source Serif 4',serif;margin-top:8px}
+.api-key-save{margin-top:6px;padding:6px 14px;background:var(--gold);border:none;border-radius:6px;color:#0a0806;font-weight:600;font-size:.82rem;cursor:pointer;font-family:'Source Serif 4',serif}
+
+.map-placeholder{background:var(--bg2);border:1px solid var(--border);border-radius:10px;height:180px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--text2);flex-direction:column;gap:8px;margin-bottom:1rem;position:relative;overflow:hidden}
+
+.timeline-visual{padding:.5rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem}
+.timeline-bar{position:relative;height:8px;background:var(--bg);border-radius:4px;overflow:visible;margin:12px 0}
+.timeline-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+
+.bio-grid{display:grid;grid-template-columns:80px 1fr;gap:12px;margin-bottom:1rem}
+.bio-portrait{width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg2);border:1px solid var(--gold)}
+.bio-portrait img{width:100%;height:100%;object-fit:cover}
+.bio-info h4{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--text);margin-bottom:4px}
+.bio-info p{font-size:.8rem;color:var(--text2);line-height:1.5}
+
+.ext-animal{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.ext-emoji{font-size:1.6rem;width:40px;text-align:center}
+.ext-info{flex:1}
+.ext-info strong{font-size:.88rem;color:var(--text);font-family:'Playfair Display',serif}
+.ext-info span{font-size:.78rem;color:var(--text2);display:block}
+.ext-year{font-size:.75rem;font-weight:600;color:#c0392b;text-align:right}
+
+.tabs{display:flex;gap:4px;margin-bottom:1rem;flex-wrap:wrap}
+.tab-btn{padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text2);font-size:.78rem;cursor:pointer;font-family:'Source Serif 4',serif;transition:all .2s}
+.tab-btn.active,.tab-btn:hover{background:var(--bg2);border-color:var(--gold);color:var(--gold)}
+
+.float-search{position:fixed;bottom:1rem;right:1rem;background:var(--gold);color:#0a0806;border:none;border-radius:50%;width:52px;height:52px;font-size:1.3rem;cursor:pointer;box-shadow:0 4px 16px rgba(201,168,76,.4);display:flex;align-items:center;justify-content:center;z-index:500;transition:all .2s}
+.float-search:hover{transform:scale(1.1);background:var(--gold-light)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <div class="stars" id="stars"></div>
+    <h1>Atlas Universal de la Historia</h1>
+    <p>Del Big Bang · 13.800 millones de años · hasta 2026</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num">138</span><span class="stat-label">Mil mill. años</span></div>
+    <div class="stat"><span class="stat-num">87</span><span class="stat-label">Civilizaciones</span></div>
+    <div class="stat"><span class="stat-num">840+</span><span class="stat-label">Guerras</span></div>
+    <div class="stat"><span class="stat-num">680+</span><span class="stat-label">Especies extintas</span></div>
+  </div>
+
+  <div class="era-nav" id="eraNavi"></div>
+
+  <div class="search-bar">
+    <input class="search-input" type="text" id="searchInput" placeholder="Buscar: Roma, Alejandro Magno, dodo, Hiroshima...">
+    <button class="search-btn" onclick="doSearch()">Buscar</button>
+  </div>
+
+  <div class="timeline-panel" id="timelinePanel"></div>
+</div>
+
+<div id="modalContainer"></div>
+
+<button class="float-search" onclick="document.getElementById('searchInput').focus()" title="Buscar">
+  <i class="ti ti-search"></i>
+</button>
+
+<script>
+const ERAS=[
+  {id:'cosmic',label:'🌌 Cósmico',color:'#4a90d9',dates:'13.800 Ma — 4.500 Ma',events:[
+    {id:'bigbang',type:'cosmic',typeLabel:'Evento Cósmico',title:'El Big Bang',date:'Hace 13.800 millones de años',summary:'El universo surge de una singularidad infinitamente densa. En fracciones de segundo, el espacio, el tiempo, la energía y la materia comienzan a existir. La temperatura inicial supera los 10³² grados Kelvin.',tags:['Física','Cosmología','Origen']},
+    {id:'stars',type:'cosmic',typeLabel:'Evento Cósmico',title:'Formación de las primeras estrellas',date:'Hace ~200 millones de años (post-BB)',summary:'Las primeras estrellas masivas (Población III) se encienden, forjando en su núcleo los elementos pesados esenciales para la vida. Sin estas estrellas, no existirían el carbono, el oxígeno ni el hierro.',tags:['Astrofísica','Nucleosíntesis']},
+    {id:'solarsystem',type:'cosmic',typeLabel:'Evento Cósmico',title:'Formación del Sistema Solar',date:'Hace 4.600 millones de años',summary:'Una nebulosa solar colapsa bajo su propia gravedad, formando el Sol y los planetas, incluida la Tierra primitiva, cubierta de océanos de magma y bombardeada por meteoritos.',tags:['Sistema Solar','Geología']},
+    {id:'earth',type:'cosmic',typeLabel:'Evento Cósmico',title:'La Tierra y la Luna',date:'Hace 4.500 millones de años',summary:'Un objeto del tamaño de Marte (Theia) colisiona con la Tierra primitiva, eyectando material que forma la Luna. Este satélite estabiliza el eje de rotación terrestre, haciendo posible el clima estable que permite la vida.',tags:['Geología','Luna','Impacto']},
+  ]},
+  {id:'prehistoric',label:'🦕 Prehistórico',color:'#7a9e4a',dates:'4.500 Ma — 3.000 a.C.',events:[
+    {id:'life',type:'prehistoric',typeLabel:'Evolución',title:'Origen de la vida',date:'Hace ~3.800 millones de años',summary:'Las primeras moléculas autoreplicantes y células procariotas emergen en los océanos primitivos. Las chimeneas hidrotermales del fondo marino pueden haber sido la cuna de la vida en la Tierra.',tags:['Biología','Química','Evolución']},
+    {id:'dinos',type:'prehistoric',typeLabel:'Era Mesozoica',title:'Edad de los Dinosaurios',date:'252 — 66 millones de años',summary:'Los dinosaurios dominan la Tierra durante ~186 millones de años. Aparecen los primeros mamíferos y aves. El T-Rex y el Triceratops reinan en el Cretácico tardío, mientras los océanos son controlados por mosasaurios y plesiosaurios.',tags:['Paleontología','Mesozoico','Reptiles']},
+    {id:'kpg',type:'extinction',typeLabel:'Extinción Masiva',title:'Extinción K-Pg (Asteroide de Chicxulub)',date:'Hace 66 millones de años',summary:'Un asteroide de 12 km impacta en el Yucatán liberando una energía equivalente a mil millones de bombas atómicas. El impacto y sus consecuencias extinguen al 76% de todas las especies, incluyendo a los dinosaurios no aviares.',tags:['Extinción','Asteroide','Cretácico']},
+    {id:'homo',type:'prehistoric',typeLabel:'Evolución Humana',title:'Homo sapiens aparece en África',date:'Hace ~300.000 años',summary:'Los humanos modernos evolucionan en África Oriental. Coexisten con el Homo neanderthalensis y el Homo denisova, con quienes se cruzan genéticamente. Los humanos modernos salen de África hace ~70.000 años y pueblan todos los continentes.',tags:['Antropología','Evolución','África']},
+    {id:'megafauna',type:'extinction',typeLabel:'Extinción',title:'Extinción de la Megafauna Pleistocena',date:'Hace 50.000 — 10.000 años',summary:'La llegada humana a nuevos continentes coincide con la extinción masiva de mamuts, mastodontes, sloths gigantes, tigres dientes de sable, gliptodontes y decenas de megaherbívoros. Es la primera gran extinción causada directamente por humanos.',tags:['Extinción','Megafauna','Humanos']},
+    {id:'agriculture',type:'prehistoric',typeLabel:'Revolución',title:'Revolución Neolítica',date:'c. 10.000 — 5.000 a.C.',summary:'La humanidad transita de la caza y recolección a la agricultura y ganadería en el Creciente Fértil, el Valle del Indo, China y Mesoamérica simultáneamente. Nacen los primeros asentamientos permanentes y las primeras jerarquías sociales.',tags:['Agricultura','Neolítico','Civilización']},
+  ]},
+  {id:'ancient',label:'🏺 Antiguo',color:'#c9a84c',dates:'3.000 a.C. — 500 a.C.',events:[
+    {id:'mesopotamia',type:'empire',typeLabel:'Imperio',title:'Mesopotamia: Sumerios, Acadios, Babilonios',date:'c. 3.500 — 539 a.C.',summary:'La primera gran civilización urbana. Los sumerios inventan la escritura cuneiforme, la rueda, la ley escrita (Código de Hammurabi) y el sistema sexagesimal aún usado en horas, minutos y grados. Ur y Babilonia son sus ciudades más gloriosas.',tags:['Sumer','Babilonia','Escritura','Ley']},
+    {id:'egypt',type:'empire',typeLabel:'Imperio',title:'Egipto Antiguo — El Imperio del Nilo',date:'c. 3.100 — 30 a.C.',summary:'Durante 3.000 años la civilización egipcia construye pirámides, desarrolla medicina, matemáticas y una cosmología sofisticada. 170 faraones gobiernan a lo largo de 31 dinastías. Ramsés II y Cleopatra son sus figuras más icónicas.',tags:['Pirámides','Faraones','Nilo','Hieroglífos']},
+    {id:'indusvalley',type:'empire',typeLabel:'Civilización',title:'Civilización del Valle del Indo',date:'c. 3.300 — 1.300 a.C.',summary:'Mohenjo-Daro y Harappa son ciudades de hasta 40.000 habitantes con planeación urbana avanzada, alcantarillado y un sistema de pesos y medidas estandarizado. Su escritura aún no ha sido descifrada.',tags:['Harappa','Urbanismo','India']},
+    {id:'china_shang',type:'empire',typeLabel:'Civilización',title:'China Antigua: Dinastías Shang y Zhou',date:'c. 1.600 — 256 a.C.',summary:'La escritura china, el bronce ritual, el concepto del Mandato del Cielo y el pensamiento de Confucio y Laozi fundamentan una de las tradiciones civilizatorias más longevas del mundo, que influye en más de mil millones de personas hasta hoy.',tags:['China','Confucio','Bronce','Escritura']},
+    {id:'phoenicia',type:'empire',typeLabel:'Civilización',title:'Fenicios: Inventores del Alfabeto',date:'c. 1.500 — 300 a.C.',summary:'Los fenicios crean el primer alfabeto fonético, fundamento de todos los sistemas de escritura occidentales. Sus barcos conectan el Mediterráneo estableciendo colonias desde Cartago hasta Cádiz, inventando el comercio mediterráneo moderno.',tags:['Alfabeto','Comercio','Mediterráneo']},
+  ]},
+  {id:'classical',label:'⚔️ Clásico',color:'#b5651d',dates:'500 a.C. — 500 d.C.',events:[
+    {id:'persia',type:'empire',typeLabel:'Imperio',title:'Imperio Persa Aqueménida',date:'550 — 330 a.C.',summary:'Ciro el Grande funda el primer imperio multinacional de la historia, que se extiende desde Grecia hasta el Indo con más de 50 millones de súbditos. Darío I construye Persépolis y la red de caminos reales que inspiran las rutas romanas.',tags:['Ciro','Darío','Persia','Aqueménidas']},
+    {id:'greece',type:'empire',typeLabel:'Civilización',title:'La Grecia Clásica',date:'500 — 323 a.C.',summary:'Atenas desarrolla la democracia, la filosofía occidental (Sócrates, Platón, Aristóteles), las matemáticas (Euclides, Pitágoras) y el teatro (Esquilo, Sófocles). Las Guerras Médicas contra Persia y la Guerra del Peloponeso reconfiguran el mundo griego.',tags:['Democracia','Filosofía','Atenas','Sócrates']},
+    {id:'alexander',type:'empire',typeLabel:'Imperio / Conquista',title:'Alejandro Magno y el Imperio Helenístico',date:'336 — 323 a.C.',summary:'En solo 12 años, Alejandro conquista Persia, Egipto, el Asia Central y llega al Punjab. Su campaña difunde la cultura griega desde el Mediterráneo hasta la India y crea la mayor red de comercio de la Antigüedad. Muere a los 32 años.',tags:['Alejandro','Macedonia','Helenismo','Conquista'],person:{name:'Alejandro Magno',dates:'356 — 323 a.C.',role:'Rey de Macedonia, Conquistador del Mundo Conocido',bio:'Alumno de Aristóteles desde los 13 años, subió al trono a los 20 tras el asesinato de su padre Filipo II. Fue invicto en toda su carrera militar: Gránico, Isos, Gaugamela. Fundó más de 20 ciudades llamadas Alejandría. Murió en Babilonia a los 32 años, posiblemente envenenado, sin heredero designado, lo que desmembró su Imperio en los reinos diádocos.'}},
+    {id:'rome',type:'empire',typeLabel:'Imperio',title:'Roma: De República a Imperio Universal',date:'509 a.C. — 476 d.C.',summary:'Roma pasa de ciudad-estado a dominar el Mediterráneo entero. Julio César, Augusto, Constantino y otros emperadores moldean el derecho, la ingeniería, el idioma y la religión del mundo occidental. El derecho romano es la base de los sistemas legales de Europa y América Latina.',tags:['Roma','Senado','Legiones','Derecho']},
+    {id:'punicwars',type:'war',typeLabel:'Guerra',title:'Guerras Púnicas: Roma vs Cartago',date:'264 — 146 a.C.',summary:'Tres guerras entre Roma y Cartago por el dominio del Mediterráneo. Aníbal cruza los Alpes con 37 elefantes y 60.000 soldados, derrotando a Roma en Cannas (50.000 romanos muertos en un día). Escipión lleva la guerra a África. Cartago es arrasada y sus tierras saladas.',tags:['Aníbal','Cartago','Mediterráneo','Elefantes']},
+    {id:'han',type:'empire',typeLabel:'Imperio',title:'Dinastía Han de China',date:'206 a.C. — 220 d.C.',summary:'La Dinastía Han consolida China, inventa el papel, desarrolla la burocracia meritocrática basada en exámenes y abre la Ruta de la Seda. Contemporánea del Imperio Romano, con quien comercia seda por vidrio y especias de forma indirecta.',tags:['China','Papel','Ruta de la Seda','Han']},
+    {id:'maurya',type:'empire',typeLabel:'Imperio',title:'Imperio Maurya y el Legado de Ashoka',date:'322 — 185 a.C.',summary:'Chandragupta Maurya unifica el subcontinente indio con 600.000 soldados. Su nieto Ashoka, tras la sangrienta guerra de Kalinga (100.000 muertos), abraza el budismo y difunde sus principios de no-violencia por toda Asia mediante edictos tallados en roca.',tags:['India','Ashoka','Budismo','Unificación']},
+  ]},
+  {id:'medieval',label:'🏰 Medieval',color:'#8b4a9e',dates:'500 — 1500 d.C.',events:[
+    {id:'byzantine',type:'empire',typeLabel:'Imperio',title:'Imperio Bizantino',date:'330 — 1453 d.C.',summary:'El heredero oriental del Imperio Romano sobrevive mil años más que el occidental. Justiniano I reconquista el Mediterráneo, codifica el derecho romano (Corpus Juris Civilis) y construye Santa Sofía. Su caída ante los otomanos en 1453 marca simbólicamente el fin de la Edad Media.',tags:['Bizancio','Constantinopla','Justiniano','Grecia']},
+    {id:'islam',type:'empire',typeLabel:'Civilización / Imperio',title:'El Surgimiento del Islam y el Califato',date:'622 — 1258 d.C.',summary:'Mahoma funda el Islam en Arabia en 622 d.C. En un siglo los califatos árabe y omeya crean el mayor imperio hasta entonces, desde España hasta la India. La Edad de Oro Islámica (750-1258) produce álgebra, algoritmos, astronomía y medicina que salvan el saber clásico.',tags:['Islam','Califato','Mahoma','Bagdad']},
+    {id:'charlemagne',type:'empire',typeLabel:'Imperio',title:'El Sacro Imperio Romano Germánico',date:'800 — 1806 d.C.',summary:'Carlomagno une Europa occidental y es coronado Emperador por el Papa León III en Navidad del año 800. El Sacro Imperio moldea la política europea por más de mil años, siendo el antecesor conceptual de la Unión Europea. Voltaire dijo que no era ni sacro, ni romano, ni un imperio.',tags:['Carlomagno','Europa','Papado','Feudalismo']},
+    {id:'mongols',type:'empire',typeLabel:'Imperio',title:'El Imperio Mongol — El Mayor Imperio Terrestre',date:'1206 — 1368 d.C.',summary:'Gengis Kan unifica las tribus mongolas en 1206 y lanza la conquista del mundo. Sus sucesores crean el mayor imperio terrestre continuo de la historia: 33 millones de km². Destruyen Bagdad en 1258, matando al último califa abasí. Kublai Kan funda la dinastía Yuan en China.',tags:['Gengis Kan','Mongolia','Conquista','Kublai Kan'],person:{name:'Gengis Kan',dates:'c. 1162 — 1227',role:'Gran Kan de Mongolia, Conquistador',bio:'Nacido como Temüyín, fue capturado como esclavo en su infancia. Unificó las tribus mongolas mediante alianzas y conquistas. Su sistema de méritos, la Yasa (código legal) y la tolerancia religiosa le permitieron gobernar un vasto imperio. A su muerte, su imperio se extendía desde el Pacífico hasta el Caspio.'}},
+    {id:'plague',type:'war',typeLabel:'Pandemia',title:'La Peste Negra',date:'1347 — 1353 d.C.',summary:'La Yersinia pestis llega a Europa desde Asia Central via la Ruta de la Seda y mata entre 75 y 200 millones de personas — el 30-60% de la población europea. Redefine la demografía, la economía laboral y la psicología europea, acelerando el fin del feudalismo.',tags:['Pandemia','Bubónica','Europa','Demografía']},
+    {id:'crusades',type:'war',typeLabel:'Guerra Santa',title:'Las Cruzadas',date:'1095 — 1291 d.C.',summary:'El Papa Urbano II convoca la Primera Cruzada en 1095. Ocho cruzadas principales intentan reconquistar Tierra Santa. Los cruzados toman Jerusalén en 1099 masacrando a su población. Saladino la reconquista en 1187. Las Cruzadas abren el comercio con Oriente y traen la Peste Negra.',tags:['Cruzadas','Jerusalén','Papado','Saladino']},
+    {id:'aztec',type:'empire',typeLabel:'Imperio',title:'Imperio Azteca (México-Tenochtitlan)',date:'1300 — 1521 d.C.',summary:'La Triple Alianza domina Mesoamérica desde Tenochtitlan, ciudad lacustre de 200.000 habitantes — más grande que cualquier ciudad europea de la época. Desarrollan astronomía precisa, escritura pictográfica y una religión centrada en sacrificios cosmológicos para mantener el sol.',tags:['Aztecas','Tenochtitlan','Mesoamérica','México']},
+    {id:'inca',type:'empire',typeLabel:'Imperio',title:'Imperio Inca (Tawantinsuyu)',date:'1438 — 1533 d.C.',summary:'El mayor estado de América prehispánica, con 12 millones de habitantes y 4 suyos (regiones). Los incas construyen 40.000 km de caminos en los Andes, una economía redistributiva sin moneda y arquitectura de piedra perfectamente ensamblada sin cemento visible en Machu Picchu.',tags:['Incas','Andes','Machu Picchu','Quipus']},
+  ]},
+  {id:'modern',label:'⚓ Moderno',color:'#c0392b',dates:'1500 — 1900 d.C.',events:[
+    {id:'renaissance',type:'science',typeLabel:'Revolución Cultural',title:'El Renacimiento y la Revolución Científica',date:'1400 — 1650 d.C.',summary:'Leonardo da Vinci, Miguel Ángel y Galileo transforman arte y ciencia. Copérnico, Kepler y Newton establecen que la Tierra orbita el Sol y formulan las leyes de la mecánica. La imprenta de Gutenberg (1450) democratiza el conocimiento, acelerando la Reforma Protestante.',tags:['Renacimiento','Galileo','Newton','Gutenberg']},
+    {id:'conquest',type:'empire',typeLabel:'Conquista / Colonialismo',title:'Conquista de América y el Colonialismo Europeo',date:'1492 — 1900 d.C.',summary:'Colón llega a América en 1492. Cortés derrota al Imperio Azteca en 1521 con 600 soldados y aliados indígenas. Pizarro conquista el Inca en 1533. Las enfermedades europeas (viruela, sarampión) matan hasta el 90% de las poblaciones indígenas americanas — 50-70 millones de personas.',tags:['Colón','Cortés','Pizarro','Colonialismo','América']},
+    {id:'ottoman',type:'empire',typeLabel:'Imperio',title:'El Imperio Otomano',date:'1299 — 1923 d.C.',summary:'Los otomanos conquistan Constantinopla en 1453, poniendo fin al Imperio Romano. En su apogeo bajo Solimán el Magnífico dominan el Medio Oriente, el Norte de África, el Cáucaso y los Balcanes. A su disolución tras la WWI surge Turquía, Irak, Siria, Palestina y Arabia Saudita.',tags:['Otomanos','Estambul','Solimán','Califato']},
+    {id:'mughal',type:'empire',typeLabel:'Imperio',title:'Imperio Mogol de India',date:'1526 — 1857 d.C.',summary:'Babur, descendiente de Gengis Kan y Tamerlán, funda el Imperio Mogol. Akbar el Grande unifica el subcontinente con tolerancia religiosa. Shah Jahan construye el Taj Mahal como mausoleo para su esposa. En el siglo XVII el Imperio genera el 25% del PIB mundial.',tags:['India','Akbar','Taj Mahal','Mogoles']},
+    {id:'industrial',type:'revolution',typeLabel:'Revolución',title:'La Revolución Industrial',date:'1760 — 1840 d.C.',summary:'La máquina de vapor de James Watt (1769) transforma la producción. Gran Bretaña lidera la industrialización con fábricas, ferrocarriles y ciudades. En 1800 solo el 3% de la población mundial vivía en ciudades; en 1900, el 15%. La productividad humana se multiplica por 100.',tags:['Vapor','Fábricas','Gran Bretaña','Tecnología']},
+    {id:'napoleon',type:'war',typeLabel:'Guerra',title:'Las Guerras Napoleónicas',date:'1803 — 1815 d.C.',summary:'Napoleón Bonaparte conquista Europa, difunde los ideales de la Revolución Francesa (libertad, igualdad, fraternidad) y el Código Napoleónico, base del derecho civil de 40 países. Su derrota en Waterloo (1815) y el Congreso de Viena rediseñan el mapa europeo y crean el concepto de "balance de poder".',tags:['Napoleón','Francia','Europa','Waterloo'],person:{name:'Napoleón Bonaparte',dates:'1769 — 1821',role:'Primer Cónsul y Emperador de los Franceses',bio:'Nacido en Córcega, ascendió en la Revolución Francesa gracias a su genio militar en Italia y Egipto. Reformó el sistema legal (Código Napoleónico), educativo y administrativo de Francia y Europa. Fue exiliado en Elba, volvió en los Cien Días, y fue definitivamente exiliado en Santa Elena donde murió a los 51 años.'}},
+    {id:'slavetrade',type:'war',typeLabel:'Crimen Histórico',title:'La Trata Transatlántica de Esclavos',date:'1500 — 1888 d.C.',summary:'Entre 12 y 15 millones de africanos fueron transportados forzosamente a América en condiciones infrahumanas. Uno de cada seis moría durante la travesía del Atlántico. La esclavitud sustentó las economías coloniales del algodón, azúcar y tabaco, dejando cicatrices sociales que perduran hasta hoy.',tags:['Esclavitud','África','América','Colonialismo']},
+    {id:'britishempire',type:'empire',typeLabel:'Imperio',title:'El Imperio Británico — El Más Grande de la Historia',date:'1583 — 1997 d.C.',summary:'En su apogeo (1920) cubre el 24% de la superficie terrestre y el 23% de la población mundial. "El Imperio en el que nunca se ponía el sol" dominó el comercio oceánico, estableció el inglés como lingua franca global y legó sistemas legales y parlamentarios a sus colonias.',tags:['Gran Bretaña','Colonias','Victoria','Comercio']},
+  ]},
+  {id:'contemporary',label:'🚀 Contemporáneo',color:'#2e86ab',dates:'1900 — 2026',events:[
+    {id:'ww1',type:'war',typeLabel:'Guerra Mundial',title:'Primera Guerra Mundial',date:'1914 — 1918',summary:'El asesinato del Archiduque Francisco Fernando en Sarajevo desata una guerra de trincheras que mata a 17 millones de personas. Caen cuatro imperios: Austro-Húngaro, Otomano, Ruso y Alemán. El Tratado de Versalles (1919) humilla a Alemania, sembrando las semillas de la Segunda Guerra.',tags:['Trincheras','Austro-Hungría','Versalles','Gas']},
+    {id:'ww2',type:'war',typeLabel:'Guerra Mundial',title:'Segunda Guerra Mundial y el Holocausto',date:'1939 — 1945',summary:'El conflicto más devastador de la historia: 70-85 millones de muertos (3% de la población mundial). Hitler y el nazismo perpetran el Holocausto eliminando a 6 millones de judíos y 5 millones de otras víctimas. Las bombas atómicas sobre Hiroshima y Nagasaki inauguran la era nuclear.',tags:['Hitler','Holocausto','Bomba Atómica','D-Day']},
+    {id:'coldwar',type:'war',typeLabel:'Conflicto',title:'La Guerra Fría',date:'1947 — 1991',summary:'EE.UU. y la URSS compiten ideológicamente sin enfrentamiento directo pero con guerras proxy (Corea, Vietnam, Angola). La crisis de los misiles en Cuba (1962) lleva al mundo al borde del apocalipsis nuclear. La caída del Muro de Berlín en 1989 y la disolución de la URSS en 1991 la concluyen.',tags:['URSS','NASA','Nuclear','Sputnik','Berlín']},
+    {id:'decolonization',type:'revolution',typeLabel:'Revolución',title:'Descolonización y Movimientos de Independencia',date:'1945 — 1980',summary:'Más de 50 países africanos y asiáticos obtienen la independencia. Gandhi lidera la independencia de India (1947) por la no-violencia. Mandela pasa 27 años en prisión y lidera el fin del apartheid sudafricano (1994). América Latina se sacude con revoluciones y dictaduras.',tags:['Gandhi','Mandela','África','Asia','Independencia'],person:{name:'Nelson Mandela',dates:'1918 — 2013',role:'Activista, Preso Político, Presidente de Sudáfrica',bio:'Abogado y activista del ANC, fue arrestado en 1964 y sentenciado a cadena perpetua por luchar contra el apartheid. Pasó 27 años en la prisión de Robben Island. Liberado en 1990, ganó el Nobel de la Paz en 1993 junto a De Klerk. Fue el primer presidente negro de Sudáfrica (1994-1999), símbolo mundial de reconciliación.'}},
+    {id:'space',type:'science',typeLabel:'Logro Científico',title:'La Era Espacial: Luna y más allá',date:'1957 — 2026',summary:'El Sputnik soviético inicia la carrera espacial en 1957. Neil Armstrong pisa la Luna el 20 de julio de 1969. Voyager 1 sale del sistema solar en 2012. Hoy SpaceX reutiliza cohetes, y la misión Artemis planea llevar a la primera mujer a la Luna. Marte está en la agenda de los años 2030.',tags:['Luna','Armstrong','SpaceX','Marte','Voyager']},
+    {id:'digital',type:'science',typeLabel:'Revolución Digital',title:'La Revolución Digital e Internet',date:'1970 — 2026',summary:'ARPANET (1969), el PC personal (1975), Tim Berners-Lee y la World Wide Web (1991), el iPhone (2007), las redes sociales y la Inteligencia Artificial Generativa (2022-2026) transforman cada aspecto de la civilización en menos de 50 años. Nunca antes el cambio fue tan rápido.',tags:['Internet','IA','Silicon Valley','Web']},
+    {id:'climatechange',type:'science',typeLabel:'Crisis Global',title:'Crisis Climática y la Sexta Extinción',date:'1800 — 2026',summary:'La actividad industrial eleva el CO₂ a 422 ppm — niveles no vistos en 3 millones de años. La temperatura global sube 1.2°C sobre el promedio preindustrial. La biodiversidad cae precipitosamente: estamos en la sexta extinción masiva, esta vez causada completamente por los humanos.',tags:['Clima','CO2','Extinción','Biodiversidad']},
+    {id:'covid',type:'war',typeLabel:'Pandemia',title:'Pandemia de COVID-19',date:'2019 — 2023',summary:'El SARS-CoV-2 surge en Wuhan en diciembre de 2019 e infecta a más de 770 millones de personas, matando a más de 7 millones oficialmente (estimaciones reales: 15-20 millones). La vacuna de ARNm de Pfizer-BioNTech fue desarrollada en solo 11 meses, un récord histórico.',tags:['COVID','Pandemia','Vacuna','ARNm']},
+  ]},
+  {id:'extinctions',label:'💀 Extinciones',color:'#e74c3c',dates:'Causadas por el ser humano',events:[
+    {id:'ext_dodo',type:'extinction',typeLabel:'Extinción',title:'Dodo (Raphus cucullatus)',date:'c. 1662 d.C.',summary:'Ave no voladora de la isla Mauricio, cazada hasta la extinción por marineros europeos y las ratas, cerdos y monos que introdujeron. Descubierta en 1598 por los holandeses, extinta en 64 años. Símbolo universal de la extinción por acción humana. No tenía miedo a los humanos.',tags:['Mauricio','Europa','Colonialismo','Ave']},
+    {id:'ext_thylacine',type:'extinction',typeLabel:'Extinción',title:'Tilacino o Tigre de Tasmania',date:'1936',summary:'El marsupial carnívoro más grande de Australia fue cazado sistemáticamente con recompensas gubernamentales pagadas por cada animal muerto. El último ejemplar conocido, llamado Benjamin, murió de frío y abandono en el Zoo de Hobart el 7 de septiembre de 1936. El gobierno australiano lo protegió legalmente 59 días después.',tags:['Australia','Tasmania','Marsupial','Gobierno']},
+    {id:'ext_passenger',type:'extinction',typeLabel:'Extinción',title:'Paloma Migratoria (Ectopistes migratorius)',date:'1914',summary:'Posiblemente la especie de aves más numerosa de Norteamérica, con bandadas de hasta 5.000 millones de individuos que oscurecían el cielo por días. Fue cazada industrialmente como alimento barato. Martha, el último ejemplar, murió en el Zoológico de Cincinnati el 1 de septiembre de 1914.',tags:['EE.UU.','Caza Industrial','Ave','Norteamérica']},
+    {id:'ext_quagga',type:'extinction',typeLabel:'Extinción',title:'Quagga (Equus quagga quagga)',date:'1883',summary:'Subespecie de cebra de Sudáfrica con rayas solo en el cuello y cabeza. Cazada hasta la extinción por colonos bóeres para alimento y cuero, y para eliminar la competencia con el ganado. El último ejemplar murió en el zoológico Artis de Amsterdam el 12 de agosto de 1883.',tags:['Sudáfrica','Cebra','Colonialismo','Mamífero']},
+    {id:'ext_stellers',type:'extinction',typeLabel:'Extinción',title:'Vaca Marina de Steller (Hydrodamalis gigas)',date:'1768',summary:'Descubierta en 1741 por Georg Steller en las Islas del Comandante, Rusia. Era un gigante de 8 metros y 8-10 toneladas, pariente del manatí, completamente inofensiva. En solo 27 años fue cazada hasta la extinción por marinos y cazadores de pieles. Solo sobreviven 27 años de su descubrimiento a su extinción.',tags:['Rusia','Pacífico','Mamífero Marino','Peles']},
+    {id:'ext_moa',type:'extinction',typeLabel:'Extinción',title:'Moa gigante (Dinornis robustus)',date:'c. 1400 d.C.',summary:'El ave más alta que ha existido: 3.6 metros de altura y hasta 230 kg. Vivió en Nueva Zelanda sin predadores naturales durante millones de años. Los maoríes llegaron a Nueva Zelanda hacia 1280 d.C. y cazaron las nueve especies de moa hasta su extinción en menos de dos siglos.',tags:['Nueva Zelanda','Maorí','Ave','Caza']},
+    {id:'ext_mammoth',type:'extinction',typeLabel:'Extinción',title:'Mamut Lanudo (Mammuthus primigenius)',date:'c. 10.000 — 1.700 a.C.',summary:'Los últimos mamuts de tierra firme se extinguieron hace ~10.000 años. Una población relicta sobrevivió en la Isla Wrangel (Ártico ruso) hasta c. 1.700 a.C. La combinación de caza humana intensiva y el calentamiento al final del Pleistoceno acabó con su especie después de 5 millones de años.',tags:['Pleistoceno','Ártico','Caza','Clima']},
+    {id:'ext_aurochs',type:'extinction',typeLabel:'Extinción',title:'Uro (Bos primigenius)',date:'1627',summary:'El ancestro salvaje de todas las vacas domésticas. Fue cazado y perseguido a lo largo de toda Europa y Asia. El último ejemplar, una hembra, murió en el bosque de Jaktorów (Polonia) en 1627. Hoy se intenta "retrodeducirlo" genéticamente con el proyecto Tauros.',tags:['Europa','Ganado','Caza','Polonia']},
+  ]}
+];
+
+const EXTINCTIONS_ALL=[
+  {name:'Mamut Lanudo',emoji:'🦣',year:'c. 10.000 a.C.',cause:'Caza + Cambio Climático'},
+  {name:'Moa Gigante',emoji:'🦤',year:'c. 1400 d.C.',cause:'Caza humana (maoríes)'},
+  {name:'Rinoceronte Lanudo',emoji:'🦏',year:'c. 8.000 a.C.',cause:'Caza + Clima'},
+  {name:'Dodo',emoji:'🐦',year:'1662',cause:'Caza + Especies invasoras'},
+  {name:'Tigre de Tasmania',emoji:'🐯',year:'1936',cause:'Caza sistemática estatal'},
+  {name:'Paloma Migratoria',emoji:'🕊️',year:'1914',cause:'Caza industrial masiva'},
+  {name:'Quagga',emoji:'🦓',year:'1883',cause:'Caza colonialista'},
+  {name:'Vaca Marina de Steller',emoji:'🐋',year:'1768',cause:'Caza de pieles'},
+  {name:'Alca Gigante',emoji:'🦅',year:'1844',cause:'Caza + coleccionismo'},
+  {name:'León de las Cavernas',emoji:'🦁',year:'c. 10.000 a.C.',cause:'Caza humana'},
+  {name:'Gliptodonte',emoji:'🦔',year:'c. 10.000 a.C.',cause:'Caza humana'},
+  {name:'Uro (Bos primigenius)',emoji:'🐂',year:'1627',cause:'Caza + pérdida hábitat'},
+  {name:'Tigre de Bali',emoji:'🐅',year:'1937',cause:'Caza colonial'},
+  {name:'Tortuga de la Isla Pinta',emoji:'🐢',year:'2012',cause:'Ratas + Caza'},
+  {name:'Paloma de Carolina',emoji:'🐦',year:'1918',cause:'Caza + deforestación'},
+  {name:'Ratón de la Isla Christmas',emoji:'🐁',year:'c. 1900',cause:'Ratas invasoras'},
+  {name:'Dronte de Reunión',emoji:'🦢',year:'c. 1700',cause:'Caza + hábitat'},
+  {name:'Pato del Labrador',emoji:'🦆',year:'1875',cause:'Caza excesiva'},
+];
+
+let activeEra=null,openEras={},currentModal=null;
+
+function generateStars(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<45;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;opacity:${0.2+Math.random()*0.5};`;
+    c.appendChild(s);
+  }
+}
+
+function buildNav(){
+  const nav=document.getElementById('eraNavi');
+  const allBtn=document.createElement('button');
+  allBtn.className='era-btn active';allBtn.textContent='📜 Todo';
+  allBtn.onclick=()=>{activeEra=null;renderAll();setActive(allBtn)};
+  nav.appendChild(allBtn);
+  ERAS.forEach(era=>{
+    const btn=document.createElement('button');
+    btn.className='era-btn';btn.textContent=era.label;
+    btn.onclick=()=>{activeEra=era.id;openEras[era.id]=true;renderAll();setActive(btn);setTimeout(()=>{document.getElementById('era-'+era.id)?.scrollIntoView({behavior:'smooth',block:'start'})},100)};
+    nav.appendChild(btn);
+  });
+}
+
+function setActive(btn){document.querySelectorAll('.era-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+
+function typeColors(t){return{empire:'type-empire',war:'type-war',science:'type-science',extinction:'type-extinction',cosmic:'type-cosmic',discovery:'type-discovery',revolution:'type-revolution',prehistoric:'type-cosmic'}[t]||'type-person'}
+
+function renderAll(){
+  const panel=document.getElementById('timelinePanel');panel.innerHTML='';
+  const eras=activeEra?ERAS.filter(e=>e.id===activeEra):ERAS;
+  eras.forEach(era=>{
+    const isOpen=openEras[era.id]!==false;
+    const sec=document.createElement('div');sec.className='era-section';sec.id='era-'+era.id;
+    sec.innerHTML=`<div class="era-header" onclick="toggleEra('${era.id}')" style="border-color:${era.color}33"><div class="era-icon" style="background:${era.color}22;color:${era.color}">${era.label.split(' ')[0]}</div><div><div class="era-title" style="color:${era.color}">${era.label.substring(2)}</div><div class="era-dates">${era.dates}</div></div><div class="era-toggle ${isOpen?'open':''}" id="toggle-${era.id}"><i class="ti ti-chevron-down"></i></div></div><div id="grid-${era.id}" ${isOpen?'':'style="display:none"'}><div class="events-grid">${era.events.map(ev=>buildCard(ev,era.id)).join('')}</div></div>`;
+    panel.appendChild(sec);
+  });
+}
+
+function buildCard(ev,eraId){
+  return`<div class="event-card ${eraId}" onclick="openModal('${eraId}','${ev.id}')"><span class="card-type ${typeColors(ev.type)}">${ev.typeLabel}</span><div class="card-title">${ev.title}</div><div class="card-date">${ev.date}</div><div class="card-summary">${ev.summary}</div><div class="card-tags">${(ev.tags||[]).slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>`;
+}
+
+function toggleEra(id){
+  openEras[id]=!openEras[id];
+  const g=document.getElementById('grid-'+id),t=document.getElementById('toggle-'+id);
+  if(g)g.style.display=openEras[id]?'':'none';
+  if(t)t.className=`era-toggle ${openEras[id]?'open':''}`;
+}
+
+function openModal(eraId,eventId){
+  const era=ERAS.find(e=>e.id===eraId),ev=era?.events.find(e=>e.id===eventId);
+  if(!ev)return;
+  const isExt=eraId==='extinctions';
+  const imgSrc=`https://picsum.photos/seed/${eventId}/800/300`;
+  const c=document.getElementById('modalContainer');
+  c.innerHTML=`<div class="modal-overlay" onclick="closeModal(event)"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hero"><img src="${imgSrc}" alt="${ev.title}" onerror="this.style.opacity=0.3"><button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-hero-overlay"><div class="modal-hero-title">${ev.title}</div><div class="modal-hero-date">${ev.date}</div></div></div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'tab-hist-${eventId}')">📖 Historia</button>
+        ${ev.person?`<button class="tab-btn" onclick="switchTab(this,'tab-bio-${eventId}')">👤 Biografía</button>`:''}
+        ${isExt?`<button class="tab-btn" onclick="switchTab(this,'tab-ext-${eventId}')">💀 Todas las Extintas</button>`:''}
+        <button class="tab-btn" onclick="switchTab(this,'tab-ia-${eventId}');loadAI('${eventId}','${eraId}')">✨ Narración IA</button>
+      </div>
+      <div id="tab-hist-${eventId}">
+        <div class="modal-section"><h3><i class="ti ti-book"></i> Resumen histórico</h3><p>${ev.summary}</p></div>
+        <div class="modal-section"><h3><i class="ti ti-timeline"></i> Posición en la historia</h3>
+          <div class="timeline-visual"><div style="font-size:.8rem;color:var(--text2);margin-bottom:6px">${ev.date}</div>
+          <div class="timeline-bar"><div class="timeline-fill" style="width:${getW(ev.date)}%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--text2)"><span>Big Bang</span><span>2026</span></div></div></div>
+        ${ev.tags?`<div class="modal-section"><h3><i class="ti ti-tags"></i> Etiquetas</h3><div class="card-tags" style="margin-top:6px">${ev.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>`:''}
+        <div class="modal-section"><h3><i class="ti ti-map"></i> Contexto geopolítico</h3>
+          <div class="map-placeholder" id="mapC-${eventId}"><i class="ti ti-map-2" style="font-size:2rem;opacity:.3"></i><span>Visualización del territorio del evento</span></div></div>
+      </div>
+      ${ev.person?`<div id="tab-bio-${eventId}" class="hidden">
+        <div class="modal-section"><h3><i class="ti ti-user"></i> Biografía: ${ev.person.name}</h3>
+        <div class="bio-grid"><div class="bio-portrait"><img src="https://picsum.photos/seed/${ev.person.name.replace(/ /g,'')}/160/160" alt="${ev.person.name}" onerror="this.style.display='none'"></div>
+        <div class="bio-info"><h4>${ev.person.name}</h4><p style="font-weight:600;color:var(--text2);margin-bottom:6px">${ev.person.dates} · ${ev.person.role}</p><p>${ev.person.bio}</p></div></div></div></div>`:''}
+      ${isExt?`<div id="tab-ext-${eventId}" class="hidden">
+        <div class="modal-section"><h3><i class="ti ti-alert-triangle"></i> Especies extintas por el ser humano</h3>
+        ${EXTINCTIONS_ALL.map(s=>`<div class="ext-animal"><div class="ext-emoji">${s.emoji}</div><div class="ext-info"><strong>${s.name}</strong><span>${s.cause}</span></div><div class="ext-year">${s.year}</div></div>`).join('')}</div></div>`:''}
+      <div id="tab-ia-${eventId}" class="hidden">
+        <div class="modal-section">
+          <h3><i class="ti ti-sparkles"></i> Narración histórica detallada (IA)</h3>
+          <div class="api-key-notice"><strong>🔑 Clave API de Anthropic requerida</strong>
+            Para usar la narración IA necesitas una clave API de Claude. Obtén una gratis en <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold)">console.anthropic.com</a>
+            <input class="api-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." value="${localStorage.getItem('claude_api_key')||''}">
+            <button class="api-key-save" onclick="saveKey()">Guardar clave</button>
+          </div>
+          <div class="ai-content" id="ai-${eventId}"><div class="ai-loading"><div class="ai-dots"><span></span><span></span><span></span></div> Listo para generar narración...</div></div>
+        </div>
+      </div>
+    </div></div></div>`;
+  currentModal={eraId,eventId};
+  setTimeout(()=>drawMap(eventId),100);
+}
+
+function saveKey(){
+  const k=document.getElementById('apiKeyInput')?.value?.trim();
+  if(k){localStorage.setItem('claude_api_key',k);alert('Clave guardada. Ahora pulsa "✨ Narración IA" de nuevo.');}
+}
+
+async function loadAI(eventId,eraId){
+  const era=ERAS.find(e=>e.id===eraId),ev=era?.events.find(e=>e.id===eventId);
+  if(!ev)return;
+  const el=document.getElementById('ai-'+eventId);
+  if(!el||el.dataset.loaded)return;
+  const key=localStorage.getItem('claude_api_key');
+  if(!key){el.innerHTML='<p style="color:var(--text2);font-size:.88rem">Por favor ingresa tu clave API de Anthropic arriba y guárdala para activar la narración IA.</p>';return;}
+  el.dataset.loaded='1';
+  el.innerHTML='<div class="ai-loading"><div class="ai-dots"><span></span><span></span><span></span></div> Consultando los archivos históricos...</div>';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:'Eres un historiador brillante y apasionado. Narra de forma detallada, evocadora y precisa en español. Incluye causas profundas, personajes clave, consecuencias y legado. Máximo 400 palabras. Sin markdown, solo párrafos.',
+        messages:[{role:'user',content:`Narra el evento histórico: "${ev.title}" (${ev.date}). Contexto base: ${ev.summary}`}]})
+    });
+    const d=await r.json();
+    if(d.error){el.innerHTML=`<p style="color:#c0392b;font-size:.88rem">Error: ${d.error.message}</p>`;return;}
+    const txt=d.content?.map(b=>b.text||'').join('')||'Sin respuesta.';
+    el.innerHTML=txt.split('\n\n').map(p=>`<p style="font-size:.9rem;line-height:1.8;margin-bottom:1rem">${p.replace(/\n/g,'<br>')}</p>`).join('');
+  }catch(err){
+    el.innerHTML=`<p style="font-size:.88rem;color:var(--text2)">${ev.summary}<br><br><em>Error de red. Verifica tu clave API y conexión a internet.</em></p>`;
+  }
+}
+
+function switchTab(btn,tabId){
+  const modal=btn.closest('.modal-body');
+  modal.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  const allTabs=modal.querySelectorAll('[id^="tab-"]');
+  allTabs.forEach(t=>t.classList.add('hidden'));
+  document.getElementById(tabId)?.classList.remove('hidden');
+}
+
+function closeModal(e){if(!e||e.target.classList.contains('modal-overlay')){document.getElementById('modalContainer').innerHTML='';currentModal=null;}}
+
+function getW(d){
+  d=d.toLowerCase();
+  if(d.includes('13.8')||d.includes('big bang'))return 1;
+  if(d.includes('4.6')||d.includes('4.5'))return 3;
+  if(d.includes('3.8'))return 5;
+  if(d.includes('millones')||d.includes(' ma'))return 8;
+  if(d.includes('50.000')||d.includes('300.000'))return 15;
+  if(d.includes('10.000'))return 20;
+  if(d.includes('3.5')||d.includes('3.1')||d.includes('3.3'))return 30;
+  if(d.includes('1.6')||d.includes('1.5'))return 38;
+  if(d.includes('500 a')||d.includes('509'))return 50;
+  if(d.includes('300 a')||d.includes('336'))return 54;
+  if(d.includes('206')||d.includes('322'))return 57;
+  if(d.includes('330')||d.includes('622'))return 68;
+  if(d.includes('1095')||d.includes('1200')||d.includes('1206'))return 75;
+  if(d.includes('1300')||d.includes('1347')||d.includes('1299'))return 78;
+  if(d.includes('1400')||d.includes('1438')||d.includes('1450'))return 81;
+  if(d.includes('1492')||d.includes('1500')||d.includes('1526'))return 83;
+  if(d.includes('1600')||d.includes('1662'))return 86;
+  if(d.includes('1700')||d.includes('1760')||d.includes('1768'))return 88;
+  if(d.includes('1800')||d.includes('1803')||d.includes('1814'))return 90;
+  if(d.includes('1883')||d.includes('1888'))return 92;
+  if(d.includes('1900')||d.includes('1914'))return 94;
+  if(d.includes('1936')||d.includes('1939'))return 96;
+  if(d.includes('1945')||d.includes('1947'))return 97;
+  if(d.includes('1969')||d.includes('1970'))return 98;
+  if(d.includes('2000')||d.includes('2019')||d.includes('2020'))return 99.5;
+  return 70;
+}
+
+function drawMap(eventId){
+  const el=document.getElementById('mapC-'+eventId);if(!el)return;
+  const cvs=document.createElement('canvas');cvs.width=el.offsetWidth||600;cvs.height=180;
+  el.innerHTML='';el.appendChild(cvs);
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='rgba(44,95,122,0.06)';ctx.fillRect(0,0,cvs.width,180);
+  ctx.strokeStyle='rgba(44,95,122,0.15)';ctx.lineWidth=0.5;
+  for(let i=0;i<cvs.width;i+=25){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,180);ctx.stroke();}
+  for(let i=0;i<180;i+=25){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(cvs.width,i);ctx.stroke();}
+  const shapes={
+    egypt:[[0.42,0.3],[0.5,0.22],[0.56,0.3],[0.56,0.48],[0.5,0.55],[0.42,0.48]],
+    rome:[[0.3,0.18],[0.6,0.15],[0.68,0.38],[0.58,0.58],[0.42,0.62],[0.28,0.52],[0.25,0.32]],
+    mongols:[[0.5,0.18],[0.88,0.12],[0.93,0.42],[0.75,0.58],[0.5,0.52],[0.38,0.35]],
+    aztec:[[0.15,0.32],[0.3,0.25],[0.35,0.42],[0.27,0.55],[0.13,0.5]],
+    britishempire:[[0.05,0.05],[0.95,0.05],[0.95,0.95],[0.05,0.95]],
+    ottoman:[[0.4,0.2],[0.75,0.18],[0.8,0.45],[0.65,0.6],[0.4,0.55],[0.3,0.38]],
+    inca:[[0.22,0.2],[0.32,0.18],[0.35,0.65],[0.28,0.78],[0.18,0.72],[0.15,0.4]],
+  };
+  const shape=shapes[eventId]||shapes.rome;
+  ctx.beginPath();
+  shape.forEach(([x,y],i)=>{const px=x*cvs.width,py=y*180;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py)});
+  ctx.closePath();
+  ctx.fillStyle='rgba(201,168,76,0.2)';ctx.fill();
+  ctx.strokeStyle='rgba(201,168,76,0.6)';ctx.lineWidth=2;ctx.stroke();
+  const cx=shape.reduce((s,[x])=>s+x,0)/shape.length*cvs.width;
+  const cy=shape.reduce((s,[,y])=>s+y,0)/shape.length*180;
+  ctx.beginPath();ctx.arc(cx,cy,7,0,Math.PI*2);ctx.fillStyle='#c9a84c';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.strokeStyle='rgba(201,168,76,0.4)';ctx.lineWidth=1;ctx.stroke();
+}
+
+function doSearch(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  if(!q){renderAll();return;}
+  const panel=document.getElementById('timelinePanel');panel.innerHTML='';
+  let results=[];
+  ERAS.forEach(era=>era.events.forEach(ev=>{
+    if((ev.title+ev.summary+(ev.tags||[]).join(' ')).toLowerCase().includes(q))results.push({era,ev});
+  }));
+  if(!results.length){panel.innerHTML=`<div style="padding:3rem;text-align:center;color:var(--text2);font-style:italic;font-size:1.1rem">No se encontraron resultados para "<strong style="color:var(--gold)">${q}</strong>"</div>`;return;}
+  const sec=document.createElement('div');sec.className='era-section';
+  sec.innerHTML=`<div class="era-header" style="border-color:#c9a84c33"><div class="era-icon" style="background:rgba(201,168,76,.2);color:#c9a84c">🔍</div><div><div class="era-title" style="color:#c9a84c">Resultados para "${q}"</div><div class="era-dates">${results.length} evento(s) encontrado(s)</div></div></div><div class="events-grid">${results.map(({era,ev})=>buildCard(ev,era.id)).join('')}</div>`;
+  panel.appendChild(sec);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+
+generateStars();
+buildNav();
+ERAS.forEach(e=>{openEras[e.id]=true;});
+renderAll();
+</script>
+</body>
+</html>
